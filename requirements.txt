@@ -1,0 +1,34 @@
+# Core RunPod serverless SDK
+runpod==1.7.3
+
+# PyTorch (pre-installed in base image, listed for clarity)
+# torch==2.2.0  # already in base image
+
+# Hugging Face
+transformers==4.44.2
+diffusers==0.30.3
+accelerate==0.34.2
+huggingface_hub==0.24.6
+safetensors==0.4.4
+tokenizers==0.19.1
+
+# Video processing
+imageio==2.35.1
+imageio-ffmpeg==0.5.1
+opencv-python-headless==4.10.0.84
+
+# Image processing
+Pillow==10.4.0
+einops==0.8.0
+omegaconf==2.3.0
+
+# Flash attention (optional, speeds up inference)
+# flash-attn==2.6.3  # uncomment if GPU supports it (A100/H100)
+
+# Utilities
+numpy==1.26.4
+tqdm==4.66.5
+pydantic==2.8.2
+
+# Storage — for uploading output to S3/R2 (optional)
+boto3==1.35.7
