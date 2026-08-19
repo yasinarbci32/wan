@@ -51,6 +51,35 @@ MAX_FRAMES   = 257  # WanVideo hard limit
 print(f"[init] DEVICE={DEVICE}, DTYPE={DTYPE}, MODEL_DIR={MODEL_DIR}")
 
 # ---------------------------------------------------------------------------
+# Download model on cold start if not cached
+# ---------------------------------------------------------------------------
+
+def ensure_model_downloaded():
+    """Download model weights if not already present (e.g. first cold start or no network volume)."""
+    marker = os.path.join(MODEL_DIR, ".download_complete")
+    if os.path.exists(marker):
+        print(f"[init] Model already cached at {MODEL_DIR}")
+        return
+
+    print(f"[init] Model not found. Downloading {MODEL_ID} to {MODEL_DIR}...")
+    from huggingface_hub import snapshot_download
+    os.makedirs(MODEL_DIR, exist_ok=True)
+    HF_TOKEN = os.environ.get("HF_TOKEN", "")
+    snapshot_download(
+        repo_id=MODEL_ID,
+        local_dir=MODEL_DIR,
+        token=HF_TOKEN or None,
+        ignore_patterns=["*.md", "*.txt", ".gitattributes"],
+    )
+    # Write marker so we skip download on next warm start
+    with open(marker, "w") as f:
+        f.write("ok")
+    print(f"[init] Download complete.")
+
+# Run download check at import time (before first job)
+ensure_model_downloaded()
+
+# ---------------------------------------------------------------------------
 # Lazy model loading — loaded once at cold start, reused across jobs
 # ---------------------------------------------------------------------------
 
